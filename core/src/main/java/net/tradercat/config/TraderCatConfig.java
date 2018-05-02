@@ -7,7 +7,12 @@ import org.trianglex.common.security.WebSecurityConfig;
 import org.trianglex.common.security.XssRequestFilter;
 
 @Configuration
-@Import({WebConfig.class, WebSecurityConfig.class, XssRequestFilter.class})
+@Import({
+        WebConfig.class,
+        WebSecurityConfig.class,
+        XssRequestFilter.class,
+        UserCentralProperties.class
+})
 public class TraderCatConfig {
 
 
