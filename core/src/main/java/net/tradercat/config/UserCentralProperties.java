@@ -8,6 +8,8 @@ public class UserCentralProperties {
     private String loginUrl;
     private String logoutUrl;
     private String sessionUrl;
+    private String appKey;
+    private String appSecret;
 
     public String getLoginUrl() {
         return loginUrl;
@@ -31,5 +33,21 @@ public class UserCentralProperties {
 
     public void setSessionUrl(String sessionUrl) {
         this.sessionUrl = sessionUrl;
+    }
+
+    public String getAppKey() {
+        return appKey;
+    }
+
+    public void setAppKey(String appKey) {
+        this.appKey = appKey;
+    }
+
+    public String getAppSecret() {
+        return appSecret;
+    }
+
+    public void setAppSecret(String appSecret) {
+        this.appSecret = appSecret;
     }
 }
