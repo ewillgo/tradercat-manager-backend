@@ -13,6 +13,8 @@ public class LoginRequest {
     @NotBlank(message = PASSWORD_NOT_BLANK)
     private String password;
 
+    private String captcha;
+
     public String getUsername() {
         return username;
     }
@@ -29,4 +31,11 @@ public class LoginRequest {
         this.password = password;
     }
 
+    public String getCaptcha() {
+        return captcha;
+    }
+
+    public void setCaptcha(String captcha) {
+        this.captcha = captcha;
+    }
 }

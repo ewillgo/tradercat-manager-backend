@@ -2,22 +2,31 @@ package net.tradercat.dto.user;
 
 public class LoginResponse {
 
-    private Integer userId;
-    private String ticket;
+    private String sign;
+    private String appKey;
+    private String originalString;
 
-    public String getTicket() {
-        return ticket;
+    public String getSign() {
+        return sign;
     }
 
-    public void setTicket(String ticket) {
-        this.ticket = ticket;
+    public void setSign(String sign) {
+        this.sign = sign;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public String getAppKey() {
+        return appKey;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setAppKey(String appKey) {
+        this.appKey = appKey;
+    }
+
+    public String getOriginalString() {
+        return originalString;
+    }
+
+    public void setOriginalString(String originalString) {
+        this.originalString = originalString;
     }
 }

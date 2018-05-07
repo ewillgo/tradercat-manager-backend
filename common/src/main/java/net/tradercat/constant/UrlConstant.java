@@ -10,5 +10,5 @@ package net.tradercat.constant;
 public interface UrlConstant {
 
     String C_USER = "/user";
-    String M_USER_GET_LOGIN = "/login";
+    String M_USER_POST_LOGIN = "/login";
 }
