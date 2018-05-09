@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.trianglex.common.dto.Result;
-import org.trianglex.common.exception.BusinessException;
+import org.trianglex.common.exception.ApiErrorException;
 import org.trianglex.common.security.auth.SignUtils;
 import org.trianglex.common.support.captcha.Captcha;
 import org.trianglex.common.support.captcha.CaptchaRender;
@@ -17,18 +17,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import static net.tradercat.constant.CommonCode.SUCCESS;
 import static net.tradercat.constant.UrlConstant.*;
+import static net.tradercat.constant.UserBusinessCode.CAPTCHA_INCORRECT;
+import static net.tradercat.constant.UserConstant.*;
 
 @Controller
 @RequestMapping(C_USER)
 public class UserController {
-
-    private static final int CAPTCHA_SIZE = 5;
-    private static final int CAPTCHA_WIDTH = 150;
-    private static final int CAPTCHA_HEIGHT = 40;
-    private static final String CAPTCHA_REGISTER = "__USER_REGISTER__";
-    private static final String CAPTCHA_LOGIN = "__USER_LOGIN__";
-    private static final String CAPTCHA_RESET_PASSWORD = "__USER_RESET_PASSWORD__";
 
     @Autowired
     private UserCentralProperties userCentralProperties;
@@ -36,12 +32,11 @@ public class UserController {
     @ResponseBody
     @PostMapping(value = M_USER_POST_LOGIN)
     public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest,
-                                       @SessionAttribute(CAPTCHA_LOGIN) Captcha captcha) {
+                                       @SessionAttribute(name = CAPTCHA_LOGIN, required = false) Captcha captcha) {
 
-        Result<LoginResponse> result = new Result<>();
-
-        if (captcha == null || CaptchaValidator.isCaptchaTimeout(captcha)) {
-            throw new BusinessException("");
+        if (captcha == null || CaptchaValidator.isCaptchaTimeout(captcha)
+                || !loginRequest.getCaptcha().equalsIgnoreCase(captcha.getCaptcha())) {
+            throw new ApiErrorException(CAPTCHA_INCORRECT);
         }
 
         LoginResponse loginResponse = new LoginResponse();
@@ -49,10 +44,7 @@ public class UserController {
         loginResponse.setOriginalString(SignUtils.generateOriginalString(loginRequest));
         loginResponse.setSign(SignUtils.sign(loginRequest, userCentralProperties.getAppSecret()));
 
-        result.setStatus(0);
-        result.setMessage("succeed");
-        result.setData(loginResponse);
-        return result;
+        return Result.of(SUCCESS, loginResponse);
     }
 
     @GetMapping(M_USER_GET_LOGIN_CAPTCHA)
