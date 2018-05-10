@@ -32,10 +32,12 @@ public class UserController {
     @ResponseBody
     @PostMapping(value = M_USER_POST_LOGIN)
     public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest,
-                                       @SessionAttribute(name = CAPTCHA_LOGIN, required = false) Captcha captcha) {
+                                       @SessionAttribute(name = CAPTCHA_LOGIN, required = false) Captcha captcha,
+                                       HttpSession session) {
 
         if (captcha == null || CaptchaValidator.isCaptchaTimeout(captcha)
                 || !loginRequest.getCaptcha().equalsIgnoreCase(captcha.getCaptcha())) {
+            session.setAttribute(CAPTCHA_LOGIN, null);
             throw new ApiErrorException(CAPTCHA_INCORRECT);
         }
 
@@ -54,4 +56,5 @@ public class UserController {
         captchaRender.render(response);
         return null;
     }
+
 }
