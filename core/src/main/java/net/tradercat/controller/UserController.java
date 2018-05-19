@@ -1,9 +1,9 @@
 package net.tradercat.controller;
 
 import net.tradercat.config.UserCentralProperties;
-import net.tradercat.dto.UasResponse;
 import net.tradercat.dto.LoginRequest;
 import net.tradercat.dto.RegisterRequest;
+import net.tradercat.dto.UasResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +34,7 @@ public class UserController {
     @ResponseBody
     @PostMapping(value = M_USER_POST_REGISTER)
     public Result<UasResponse> register(@Valid @RequestBody RegisterRequest registerRequest,
-                                        @SessionAttribute(name = CAPTCHA_LOGIN, required = false) Captcha serverCaptcha,
+                                        @SessionAttribute(name = CAPTCHA_REGISTER, required = false) Captcha serverCaptcha,
                                         HttpSession session) {
         // 校验验证码
         processCaptcha(new Captcha(registerRequest.getCaptcha()), serverCaptcha, CAPTCHA_REGISTER, session);
