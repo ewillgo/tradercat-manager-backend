@@ -11,5 +11,7 @@ public interface UrlConstant {
 
     String C_USER = "/user";
     String M_USER_POST_LOGIN = "/login";
+    String M_USER_POST_REGISTER = "/register";
     String M_USER_GET_LOGIN_CAPTCHA = "/loginCaptcha";
+    String M_USER_GET_REGISTER_CAPTCHA = "/registerCaptcha";
 }

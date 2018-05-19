@@ -32,6 +32,11 @@
             </dependency>
             <dependency>
                 <groupId>net.tradercat</groupId>
+                <artifactId>tradercat-api</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>net.tradercat</groupId>
                 <artifactId>tradercat-common</artifactId>
                 <version>1.0.0</version>
             </dependency>

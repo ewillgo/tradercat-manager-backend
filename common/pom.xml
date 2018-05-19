@@ -17,8 +17,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.trianglex</groupId>
-            <artifactId>trianglex-common</artifactId>
+            <groupId>net.tradercat</groupId>
+            <artifactId>tradercat-api</artifactId>
         </dependency>
     </dependencies>
 

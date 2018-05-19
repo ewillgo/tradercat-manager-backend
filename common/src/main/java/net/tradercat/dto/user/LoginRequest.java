@@ -2,9 +2,7 @@ package net.tradercat.dto.user;
 
 import javax.validation.constraints.NotBlank;
 
-import static net.tradercat.constant.UserConstant.CAPTCHA_NOT_BLANK;
-import static net.tradercat.constant.UserConstant.PASSWORD_NOT_BLANK;
-import static net.tradercat.constant.UserConstant.USERNAME_NOT_BLANK;
+import static net.tradercat.constant.UserConstant.*;
 
 public class LoginRequest {
 

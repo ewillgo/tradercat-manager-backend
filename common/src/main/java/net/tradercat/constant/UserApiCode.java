@@ -2,14 +2,15 @@ package net.tradercat.constant;
 
 import org.trianglex.common.exception.ApiCode;
 
-public enum UserBusinessCode implements ApiCode {
+public enum UserApiCode implements ApiCode {
 
-    CAPTCHA_INCORRECT(2000, "验证码错误");
+    CAPTCHA_INCORRECT(2000, "验证码错误"),
+    CAPTCHA_TIMEOUT(2001, "验证码超时");
 
     private Integer status;
     private String messge;
 
-    UserBusinessCode(Integer status, String messge) {
+    UserApiCode(Integer status, String messge) {
         this.status = status;
         this.messge = messge;
     }
