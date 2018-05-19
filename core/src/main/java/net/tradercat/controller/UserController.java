@@ -1,9 +1,9 @@
 package net.tradercat.controller;
 
 import net.tradercat.config.UserCentralProperties;
-import net.tradercat.dto.base.UasResponse;
-import net.tradercat.dto.user.LoginRequest;
-import net.tradercat.dto.user.RegisterRequest;
+import net.tradercat.dto.UasResponse;
+import net.tradercat.dto.LoginRequest;
+import net.tradercat.dto.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

@@ -1,11 +1,13 @@
-package net.tradercat.dto.user;
+package net.tradercat.dto;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import static net.tradercat.constant.UserConstant.*;
 
 public class LoginRequest {
 
+    @Email(message = EMAIL_INCORRECT)
     @NotBlank(message = USERNAME_NOT_BLANK)
     private String username;
 

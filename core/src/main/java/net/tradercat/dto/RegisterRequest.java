@@ -1,4 +1,4 @@
-package net.tradercat.dto.user;
+package net.tradercat.dto;
 
 import javax.validation.constraints.NotBlank;
 

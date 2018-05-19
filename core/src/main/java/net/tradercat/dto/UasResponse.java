@@ -1,4 +1,4 @@
-package net.tradercat.dto.base;
+package net.tradercat.dto;
 
 public class UasResponse {
 
