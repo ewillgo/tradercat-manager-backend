@@ -78,14 +78,17 @@ public class UserController {
     private void processCaptcha(
             Captcha clientCaptcha, Captcha serverCaptcha, String captchaSessionKey, HttpSession session) {
 
-        if (!CaptchaValidator.equalsIgnoreCase(clientCaptcha, serverCaptcha)) {
+        try {
+            if (!CaptchaValidator.equalsIgnoreCase(clientCaptcha, serverCaptcha)) {
+                throw new ApiErrorException(CAPTCHA_INCORRECT);
+            }
+
+            if (CaptchaValidator.isCaptchaTimeout(serverCaptcha)) {
+                throw new ApiErrorException(CAPTCHA_TIMEOUT);
+            }
+        } finally {
             session.setAttribute(captchaSessionKey, null);
-            throw new ApiErrorException(CAPTCHA_INCORRECT);
         }
 
-        if (CaptchaValidator.isCaptchaTimeout(serverCaptcha)) {
-            session.setAttribute(captchaSessionKey, null);
-            throw new ApiErrorException(CAPTCHA_TIMEOUT);
-        }
     }
 }
