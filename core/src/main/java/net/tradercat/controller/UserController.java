@@ -1,9 +1,8 @@
 package net.tradercat.controller;
 
-import net.tradercat.config.UserCentralProperties;
 import net.tradercat.dto.LoginRequest;
 import net.tradercat.dto.RegisterRequest;
-import net.tradercat.dto.UasResponse;
+import net.tradercat.dto.RegisterResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +12,11 @@ import org.trianglex.common.security.auth.SignUtils;
 import org.trianglex.common.support.captcha.Captcha;
 import org.trianglex.common.support.captcha.CaptchaRender;
 import org.trianglex.common.support.captcha.CaptchaValidator;
+import org.trianglex.usercentral.api.UasClient;
+import org.trianglex.usercentral.api.dto.UasRegisterRequest;
+import org.trianglex.usercentral.api.dto.UasRegisterResponse;
+import org.trianglex.usercentral.api.enums.GenderType;
+import org.trianglex.usercentral.api.session.UasProperties;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,8 +24,7 @@ import javax.validation.Valid;
 
 import static net.tradercat.constant.CommonCode.SUCCESS;
 import static net.tradercat.constant.UrlConstant.*;
-import static net.tradercat.constant.UserApiCode.CAPTCHA_INCORRECT;
-import static net.tradercat.constant.UserApiCode.CAPTCHA_TIMEOUT;
+import static net.tradercat.constant.UserApiCode.*;
 import static net.tradercat.constant.UserConstant.*;
 
 @Controller
@@ -29,26 +32,49 @@ import static net.tradercat.constant.UserConstant.*;
 public class UserController {
 
     @Autowired
-    private UserCentralProperties userCentralProperties;
+    private UasClient uasClient;
+
+    @Autowired
+    private UasProperties uasProperties;
 
     @ResponseBody
     @PostMapping(value = M_USER_POST_REGISTER)
-    public Result<UasResponse> register(@Valid @RequestBody RegisterRequest registerRequest,
-                                        @SessionAttribute(name = CAPTCHA_REGISTER, required = false) Captcha serverCaptcha,
-                                        HttpSession session) {
+    public Result<RegisterResponse> register(@Valid @RequestBody RegisterRequest registerRequest,
+                                             @SessionAttribute(name = CAPTCHA_REGISTER, required = false) Captcha serverCaptcha,
+                                             HttpSession session) {
         // 校验验证码
         processCaptcha(new Captcha(registerRequest.getCaptcha()), serverCaptcha, CAPTCHA_REGISTER, session);
-        return Result.of(SUCCESS, processUasResponse(registerRequest));
+
+        UasRegisterRequest uasRegisterRequest = new UasRegisterRequest();
+        uasRegisterRequest.setUsername(registerRequest.getUsername());
+        uasRegisterRequest.setPassword(registerRequest.getPassword());
+        uasRegisterRequest.setNickname(registerRequest.getNickname());
+        uasRegisterRequest.setGender(GenderType.SECRET.getCode());
+        uasRegisterRequest.setAppKey(uasProperties.getAppKey());
+        uasRegisterRequest.setSign(SignUtils.sign(registerRequest, uasProperties.getAppSecret()));
+
+        Result<UasRegisterResponse> result;
+        try {
+            result = uasClient.register(uasRegisterRequest);
+        } catch (Exception e) {
+            throw new ApiErrorException(REGISTER_ERROR, e);
+        }
+
+        return Result.of(result.getStatus(), result.getMessage(),
+                result.getStatus() == SUCCESS.getStatus().intValue()
+                        ? new RegisterResponse(result.getData().getTicketString())
+                        : null
+        );
     }
 
     @ResponseBody
     @PostMapping(value = M_USER_POST_LOGIN)
-    public Result<UasResponse> login(@Valid @RequestBody LoginRequest loginRequest,
-                                     @SessionAttribute(name = CAPTCHA_LOGIN, required = false) Captcha serverCaptcha,
-                                     HttpSession session) {
+    public Result login(@Valid @RequestBody LoginRequest loginRequest,
+                        @SessionAttribute(name = CAPTCHA_LOGIN, required = false) Captcha serverCaptcha,
+                        HttpSession session) {
         // 校验验证码
         processCaptcha(new Captcha(loginRequest.getCaptcha()), serverCaptcha, CAPTCHA_LOGIN, session);
-        return Result.of(SUCCESS, processUasResponse(loginRequest));
+        return Result.of(SUCCESS);
     }
 
     @GetMapping(M_USER_GET_LOGIN_CAPTCHA)
@@ -65,14 +91,6 @@ public class UserController {
         session.setAttribute(CAPTCHA_REGISTER, captchaRender.getCaptcha());
         captchaRender.render(response);
         return null;
-    }
-
-    private <T> UasResponse processUasResponse(T data) {
-        UasResponse uasResponse = new UasResponse();
-        uasResponse.setAppKey(userCentralProperties.getAppKey());
-        uasResponse.setOriginalString(SignUtils.generateOriginalString(data));
-        uasResponse.setSign(SignUtils.sign(data, userCentralProperties.getAppSecret()));
-        return uasResponse;
     }
 
     private void processCaptcha(
