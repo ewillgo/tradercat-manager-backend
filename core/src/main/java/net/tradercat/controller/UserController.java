@@ -43,7 +43,7 @@ public class UserController {
                                              @SessionAttribute(name = CAPTCHA_REGISTER, required = false) Captcha serverCaptcha,
                                              HttpSession session) {
         // 校验验证码
-        processCaptcha(new Captcha(registerRequest.getCaptcha()), serverCaptcha, CAPTCHA_REGISTER, session);
+//        processCaptcha(new Captcha(registerRequest.getCaptcha()), serverCaptcha, CAPTCHA_REGISTER, session);
 
         UasRegisterRequest uasRegisterRequest = new UasRegisterRequest();
         uasRegisterRequest.setUsername(registerRequest.getUsername());
