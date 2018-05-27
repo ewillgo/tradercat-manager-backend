@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.trianglex.common.dto.Result;
-import org.trianglex.common.exception.ApiErrorException;
+import org.trianglex.common.exception.ClientApiException;
 import org.trianglex.common.security.auth.SignUtils;
 import org.trianglex.common.support.captcha.Captcha;
 import org.trianglex.common.support.captcha.CaptchaRender;
@@ -43,7 +43,7 @@ public class UserController {
                                              @SessionAttribute(name = CAPTCHA_REGISTER, required = false) Captcha serverCaptcha,
                                              HttpSession session) {
         // 校验验证码
-//        processCaptcha(new Captcha(registerRequest.getCaptcha()), serverCaptcha, CAPTCHA_REGISTER, session);
+        processCaptcha(new Captcha(registerRequest.getCaptcha()), serverCaptcha, CAPTCHA_REGISTER, session);
 
         UasRegisterRequest uasRegisterRequest = new UasRegisterRequest();
         uasRegisterRequest.setUsername(registerRequest.getUsername());
@@ -57,7 +57,7 @@ public class UserController {
         try {
             result = uasClient.register(uasRegisterRequest);
         } catch (Exception e) {
-            throw new ApiErrorException(REGISTER_ERROR, e);
+            throw new ClientApiException(REGISTER_ERROR, e);
         }
 
         return Result.of(result.getStatus(), result.getMessage(),
@@ -98,11 +98,11 @@ public class UserController {
 
         try {
             if (!CaptchaValidator.equalsIgnoreCase(clientCaptcha, serverCaptcha)) {
-                throw new ApiErrorException(CAPTCHA_INCORRECT);
+                throw new ClientApiException(CAPTCHA_INCORRECT);
             }
 
             if (CaptchaValidator.isCaptchaTimeout(serverCaptcha)) {
-                throw new ApiErrorException(CAPTCHA_TIMEOUT);
+                throw new ClientApiException(CAPTCHA_TIMEOUT);
             }
         } finally {
             session.setAttribute(captchaSessionKey, null);
