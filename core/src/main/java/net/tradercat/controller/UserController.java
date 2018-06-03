@@ -13,10 +13,10 @@ import org.trianglex.common.support.captcha.Captcha;
 import org.trianglex.common.support.captcha.CaptchaRender;
 import org.trianglex.common.support.captcha.CaptchaValidator;
 import org.trianglex.usercentral.api.UasClient;
+import org.trianglex.usercentral.api.core.UasProperties;
 import org.trianglex.usercentral.api.dto.UasRegisterRequest;
 import org.trianglex.usercentral.api.dto.UasRegisterResponse;
 import org.trianglex.usercentral.api.enums.GenderType;
-import org.trianglex.usercentral.api.session.UasProperties;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,7 +24,8 @@ import javax.validation.Valid;
 
 import static net.tradercat.constant.CommonCode.SUCCESS;
 import static net.tradercat.constant.UrlConstant.*;
-import static net.tradercat.constant.UserApiCode.*;
+import static net.tradercat.constant.UserApiCode.CAPTCHA_INCORRECT;
+import static net.tradercat.constant.UserApiCode.CAPTCHA_TIMEOUT;
 import static net.tradercat.constant.UserConstant.*;
 
 @Controller
@@ -53,13 +54,7 @@ public class UserController {
         uasRegisterRequest.setAppKey(uasProperties.getAppKey());
         uasRegisterRequest.setSign(SignUtils.sign(registerRequest, uasProperties.getAppSecret()));
 
-        Result<UasRegisterResponse> result;
-        try {
-            result = uasClient.register(uasRegisterRequest);
-        } catch (Exception e) {
-            throw new ClientApiException(REGISTER_ERROR, e);
-        }
-
+        Result<UasRegisterResponse> result = uasClient.register(uasRegisterRequest);
         return Result.of(result.getStatus(), result.getMessage(),
                 result.getStatus() == SUCCESS.getStatus().intValue()
                         ? new RegisterResponse(result.getData().getTicketString())
